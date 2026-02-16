@@ -234,15 +234,24 @@
 
       <div class="section-title">Save</div>
       <div class="savebar">
-        <button class="action" id="shareBtn" type="button">Share this card</button>
-        <button class="action" id="copyEmailBtn" type="button">Copy email</button>
-        <button class="action" id="copyPhoneBtn" type="button">Copy phone</button>
+        <button class="action" id="shareBtn" type="button">Share / Save link</button>
+
+        <a class="action"
+           href="mailto:?subject=Robin%20Duchesneau%20Contact%20Card&body=Robin%20Duchesneau%0A%0AContact%20card%3A%20https%3A%2F%2Frbndchsn.github.io%2Fcontact-card%2F%0A%0AEmail%3A%20robin.duchesneau%40apexcos.com%0APhone%3A%20%2B1%20(925)%20247-9133">
+          Email to yourself
+        </a>
+
+        <a class="action"
+           href="sms:?&body=Robin%20Duchesneau%20contact%20card%3A%20https%3A%2F%2Frbndchsn.github.io%2Fcontact-card%2F%0AEmail%3A%20robin.duchesneau%40apexcos.com%0APhone%3A%20%2B1%20(925)%20247-9133">
+          Text to yourself
+        </a>
+
         <!-- Optional: add this file to your repo at assets/robin-duchesneau.vcf -->
         <a class="action" href="assets/robin-duchesneau.vcf">Save contact (VCF)</a>
       </div>
 
       <div class="tiny-tip">
-        Tip: use your browser’s Share button to bookmark or add to Home Screen.
+        Tip: Share → Add to Home Screen saves this like an app icon.
       </div>
 
       <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -252,61 +261,29 @@
   </div>
 
   <script>
-    const EMAIL = "robin.duchesneau@apexcos.com";
-    const PHONE_DISPLAY = "+1 (925) 247-9133";
-    const PHONE_E164 = "+19252479133";
-    const PAGE_URL = window.location.href;
-
     const toast = document.getElementById("toast");
-
     function showToast(msg){
       toast.textContent = msg;
       toast.style.display = "block";
       clearTimeout(showToast._t);
-      showToast._t = setTimeout(() => { toast.style.display = "none"; }, 2200);
+      showToast._t = setTimeout(() => { toast.style.display = "none"; }, 2400);
     }
-
-    async function copyText(text, label){
-      try{
-        await navigator.clipboard.writeText(text);
-        showToast(`${label} copied`);
-      }catch(e){
-        // fallback for older browsers
-        const ta = document.createElement("textarea");
-        ta.value = text;
-        ta.style.position = "fixed";
-        ta.style.left = "-9999px";
-        document.body.appendChild(ta);
-        ta.select();
-        try{
-          document.execCommand("copy");
-          showToast(`${label} copied`);
-        }catch(err){
-          showToast(`Could not copy ${label.toLowerCase()}`);
-        }
-        document.body.removeChild(ta);
-      }
-    }
-
-    document.getElementById("copyEmailBtn").addEventListener("click", () => copyText(EMAIL, "Email"));
-    document.getElementById("copyPhoneBtn").addEventListener("click", () => copyText(PHONE_DISPLAY, "Phone"));
 
     document.getElementById("shareBtn").addEventListener("click", async () => {
       const shareData = {
         title: "Robin Duchesneau — Contact",
-        text: `Robin Duchesneau\nEmail: ${EMAIL}\nPhone: ${PHONE_DISPLAY}`,
-        url: PAGE_URL
+        text: "Robin Duchesneau contact card",
+        url: window.location.href
       };
 
       if (navigator.share){
         try{
           await navigator.share(shareData);
         }catch(e){
-          // user cancelled or share failed; do nothing
+          // cancelled; ignore
         }
       } else {
-        await copyText(PAGE_URL, "Link");
-        showToast("Share not available — link copied");
+        showToast("Share not available here — use your browser menu to share/bookmark.");
       }
     });
   </script>
