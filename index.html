@@ -9,7 +9,6 @@
     :root{
       --bg0:#0b0f17;
       --bg1:#0f172a;
-      --card:#111827;
       --border:rgba(255,255,255,.12);
       --text:#ffffff;
       --muted:rgba(255,255,255,.72);
@@ -39,6 +38,7 @@
     .wrap{ width:100%; max-width:680px; }
 
     .card{
+      position: relative;
       background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
       border:1px solid var(--border);
       border-radius:var(--radius);
@@ -47,11 +47,25 @@
       backdrop-filter: blur(10px);
     }
 
+    .logo{
+      position:absolute;
+      top:18px;
+      right:18px;
+      width:56px;
+      height:56px;
+      object-fit:contain;
+      border-radius:12px;
+      border:1px solid var(--border);
+      background: rgba(0,0,0,.20);
+      padding:8px;
+    }
+
     h1{
       margin:0 0 8px;
       font-size:32px;
       letter-spacing:-0.02em;
       line-height:1.15;
+      padding-right: 84px; /* keep text clear of logo */
     }
 
     .sub{
@@ -123,10 +137,10 @@
       text-align:center;
     }
 
-    /* Make tap targets friendly on mobile */
     @media (max-width: 420px){
       h1{ font-size:28px; }
       a.item{ padding:13px 14px; }
+      .logo{ width:52px; height:52px; top:16px; right:16px; }
     }
   </style>
 </head>
@@ -134,6 +148,9 @@
 <body>
   <div class="wrap">
     <div class="card">
+      <!-- Put your image in the repo at: assets/logo.png -->
+      <img class="logo" src="assets/logo.png" alt="Logo">
+
       <h1>Robin Duchesneau</h1>
       <p class="sub">Principal/Lead — Product Sustainability • Apex Companies</p>
 
@@ -176,7 +193,7 @@
       </div>
     </div>
 
-    <div class="footer">Saved on GitHub Pages • Simple, private, and fast</div>
+    <div class="footer">Quick contact • hosted on GitHub Pages</div>
   </div>
 </body>
 </html>
