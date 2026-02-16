@@ -47,17 +47,32 @@
       backdrop-filter: blur(10px);
     }
 
-    .logo{
+    /* Top-right images */
+    .top-media{
       position:absolute;
       top:18px;
       right:18px;
-      width:56px;
-      height:56px;
-      object-fit:contain;
-      border-radius:12px;
+      display:flex;
+      gap:10px;
+      align-items:center;
+      z-index:2;
+    }
+
+    .avatar, .logo{
+      width:76px;
+      height:76px;
+      border-radius:14px;
       border:1px solid var(--border);
       background: rgba(0,0,0,.20);
-      padding:8px;
+    }
+
+    .avatar{
+      object-fit: cover;   /* face photo: fill nicely */
+    }
+
+    .logo{
+      object-fit: contain; /* logo: keep proportions */
+      padding:10px;        /* give logo breathing room */
     }
 
     h1{
@@ -65,7 +80,7 @@
       font-size:32px;
       letter-spacing:-0.02em;
       line-height:1.15;
-      padding-right: 84px; /* keep text clear of logo */
+      padding-right: 190px; /* space for face + logo (76+10+76) */
     }
 
     .sub{
@@ -176,10 +191,13 @@
       text-align:center;
     }
 
-    @media (max-width: 420px){
-      h1{ font-size:28px; }
+    @media (max-width: 520px){
+      /* shrink top images on smaller phones */
+      .top-media{ top:16px; right:16px; gap:8px; }
+      .avatar, .logo{ width:60px; height:60px; border-radius:12px; }
+      .logo{ padding:8px; }
+      h1{ font-size:28px; padding-right: 156px; }
       a.item{ padding:13px 14px; }
-      .logo{ width:52px; height:52px; top:16px; right:16px; }
       button.action, a.action{ width:100%; justify-content:center; }
     }
   </style>
@@ -188,8 +206,12 @@
 <body>
   <div class="wrap">
     <div class="card">
-      <!-- Put your image in the repo at: assets/logo.png -->
-      <img class="logo" src="assets/logo.png" alt="Logo">
+
+      <!-- Top-right: face (left) + logo (right) -->
+      <div class="top-media">
+        <img class="avatar" src="assets/myface.jpeg" alt="Robin Duchesneau">
+        <img class="logo" src="assets/logo.png" alt="Logo">
+      </div>
 
       <h1>Robin Duchesneau</h1>
       <p class="sub">Principal/Lead — Product Sustainability • Apex Companies</p>
