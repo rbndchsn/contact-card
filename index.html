@@ -35,7 +35,7 @@
         linear-gradient(180deg, var(--bg0), var(--bg1));
     }
 
-    .wrap{ width:100%; max-width:680px; }
+    .wrap{ width:100%; max-width:720px; }
 
     .card{
       position: relative;
@@ -51,8 +51,8 @@
       position:absolute;
       top:18px;
       right:18px;
-      width:72px;
-      height:72px;
+      width:56px;
+      height:56px;
       object-fit:contain;
       border-radius:12px;
       border:1px solid var(--border);
@@ -69,16 +69,13 @@
     }
 
     .sub{
-      margin:0 0 22px;
+      margin:0 0 18px;
       color:var(--muted);
       font-size:16px;
       line-height:1.4;
     }
 
-    .grid{
-      display:grid;
-      gap:12px;
-    }
+    .grid{ display:grid; gap:12px; }
 
     a.item{
       display:flex;
@@ -100,25 +97,9 @@
       transform: translateY(-1px);
     }
 
-    .label{
-      font-weight:700;
-      font-size:15px;
-      margin:0 0 4px;
-    }
-
-    .value{
-      margin:0;
-      color:var(--muted);
-      font-size:14px;
-      line-height:1.35;
-      word-break: break-word;
-    }
-
-    .hint{
-      color:var(--muted2);
-      font-size:12px;
-      margin-top:2px;
-    }
+    .label{ font-weight:700; font-size:15px; margin:0 0 4px; }
+    .value{ margin:0; color:var(--muted); font-size:14px; line-height:1.35; word-break: break-word; }
+    .hint{ color:var(--muted2); font-size:12px; margin-top:2px; }
 
     .pill{
       font-size:12px;
@@ -128,6 +109,64 @@
       padding:6px 10px;
       white-space:nowrap;
       margin-top:2px;
+    }
+
+    .section-title{
+      margin:18px 0 10px;
+      font-size:13px;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      color:var(--muted2);
+    }
+
+    .savebar{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:10px;
+    }
+
+    button.action, a.action{
+      appearance:none;
+      border:1px solid var(--border);
+      background: rgba(0,0,0,.18);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:12px;
+      cursor:pointer;
+      font-weight:650;
+      font-size:14px;
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      transition: background .12s ease, border-color .12s ease, transform .08s ease;
+    }
+
+    button.action:hover, a.action:hover{
+      background: var(--hover);
+      border-color: rgba(255,255,255,.18);
+      transform: translateY(-1px);
+    }
+
+    button.action:active, a.action:active{ transform: translateY(0); }
+
+    .tiny-tip{
+      margin-top:10px;
+      color:var(--muted2);
+      font-size:12px;
+      line-height:1.35;
+    }
+
+    .toast{
+      display:none;
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid var(--border);
+      background: rgba(0,0,0,.22);
+      color: var(--muted);
+      font-size:13px;
     }
 
     .footer{
@@ -140,7 +179,8 @@
     @media (max-width: 420px){
       h1{ font-size:28px; }
       a.item{ padding:13px 14px; }
-      .logo{ width:62px; height:62px; top:16px; right:16px; }
+      .logo{ width:52px; height:52px; top:16px; right:16px; }
+      button.action, a.action{ width:100%; justify-content:center; }
     }
   </style>
 </head>
@@ -191,9 +231,84 @@
           <div class="pill">web</div>
         </a>
       </div>
+
+      <div class="section-title">Save</div>
+      <div class="savebar">
+        <button class="action" id="shareBtn" type="button">Share this card</button>
+        <button class="action" id="copyEmailBtn" type="button">Copy email</button>
+        <button class="action" id="copyPhoneBtn" type="button">Copy phone</button>
+        <!-- Optional: add this file to your repo at assets/robin-duchesneau.vcf -->
+        <a class="action" href="assets/robin-duchesneau.vcf">Save contact (VCF)</a>
+      </div>
+
+      <div class="tiny-tip">
+        Tip: use your browser’s Share button to bookmark or add to Home Screen.
+      </div>
+
+      <div class="toast" id="toast" role="status" aria-live="polite"></div>
     </div>
 
     <div class="footer">Quick contact • hosted on GitHub Pages</div>
   </div>
+
+  <script>
+    const EMAIL = "robin.duchesneau@apexcos.com";
+    const PHONE_DISPLAY = "+1 (925) 247-9133";
+    const PHONE_E164 = "+19252479133";
+    const PAGE_URL = window.location.href;
+
+    const toast = document.getElementById("toast");
+
+    function showToast(msg){
+      toast.textContent = msg;
+      toast.style.display = "block";
+      clearTimeout(showToast._t);
+      showToast._t = setTimeout(() => { toast.style.display = "none"; }, 2200);
+    }
+
+    async function copyText(text, label){
+      try{
+        await navigator.clipboard.writeText(text);
+        showToast(`${label} copied`);
+      }catch(e){
+        // fallback for older browsers
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        ta.style.position = "fixed";
+        ta.style.left = "-9999px";
+        document.body.appendChild(ta);
+        ta.select();
+        try{
+          document.execCommand("copy");
+          showToast(`${label} copied`);
+        }catch(err){
+          showToast(`Could not copy ${label.toLowerCase()}`);
+        }
+        document.body.removeChild(ta);
+      }
+    }
+
+    document.getElementById("copyEmailBtn").addEventListener("click", () => copyText(EMAIL, "Email"));
+    document.getElementById("copyPhoneBtn").addEventListener("click", () => copyText(PHONE_DISPLAY, "Phone"));
+
+    document.getElementById("shareBtn").addEventListener("click", async () => {
+      const shareData = {
+        title: "Robin Duchesneau — Contact",
+        text: `Robin Duchesneau\nEmail: ${EMAIL}\nPhone: ${PHONE_DISPLAY}`,
+        url: PAGE_URL
+      };
+
+      if (navigator.share){
+        try{
+          await navigator.share(shareData);
+        }catch(e){
+          // user cancelled or share failed; do nothing
+        }
+      } else {
+        await copyText(PAGE_URL, "Link");
+        showToast("Share not available — link copied");
+      }
+    });
+  </script>
 </body>
 </html>
